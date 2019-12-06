@@ -41,15 +41,19 @@ public class Client {
                     }
                     if(req.substring(0,5).equals(">get ")){
                         out.println(req);
+                        int index = Integer.parseInt(req.substring(6));
+                        resp = RSAGenerator.decrypt(in.readLine(), keyPairs.get(index).getPrivate());
+                        System.out.println(resp);
                     }
                     if(req.substring(0, 8).equals(">create ")){
                         KeyPair kp = RSAGenerator.generateKeyPair();
+                        keyPairs.add(kp);
                         String cipherText = RSAGenerator.encrypt(req.substring(8), kp.getPublic());
                         out.println(cipherText);
+                        resp = in.readLine();
+                        System.out.println(resp);
                     }
                 }
-                resp = in.readLine();
-                System.out.println(resp);
             }
         }catch (UnknownHostException e) {
             e.printStackTrace();

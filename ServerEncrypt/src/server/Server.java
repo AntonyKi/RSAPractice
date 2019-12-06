@@ -44,6 +44,7 @@ public class Server {
                 }
                 if(req.substring(0, 8).equals(">create ")){
                     docs.add(req.substring(8));
+                    out.println("Created succesfully with index " + docs.size());
                 }
             }
 
