@@ -30,19 +30,23 @@ public class Client {
 
             while(true){
                 req = stdin.readLine();
-
-                if(req.equalsIgnoreCase("exit")){
-                    for(int i = 0; i < 3; i++){
-                        resp = in.readLine();
-                        System.out.println(resp);
+                if(req.length() > 4){
+                    if(req.equalsIgnoreCase(">exit")){
+                        for(int i = 0; i < 3; i++){
+                            resp = in.readLine();
+                            System.out.println(resp);
+                        }
+                        echoSocket.close();
+                        break;
                     }
-                    echoSocket.close();
-                    break;
-                }
-                if(req.substring(0, 6).equals(">create")){
-                    KeyPair kp = RSAGenerator.generateKeyPair();
-                    String cipherText = RSAGenerator.encrypt(req, kp.getPublic());
-                    out.println(cipherText);
+                    if(req.substring(0,5).equals(">get ")){
+                        out.println(req);
+                    }
+                    if(req.substring(0, 8).equals(">create ")){
+                        KeyPair kp = RSAGenerator.generateKeyPair();
+                        String cipherText = RSAGenerator.encrypt(req.substring(8), kp.getPublic());
+                        out.println(cipherText);
+                    }
                 }
                 resp = in.readLine();
                 System.out.println(resp);
