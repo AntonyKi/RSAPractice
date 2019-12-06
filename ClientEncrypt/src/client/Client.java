@@ -10,21 +10,21 @@ import java.util.ArrayList;
 
 public class Client {
 
-    private final static int DEFAULT_PORT_NUMBER = 1034;
+    private final static int DEFAULT_PORT_NUMBER = 1044;
     private final static String DEFAULT_HOST_NAME = "127.0.0.1";
     private static int portNumber = DEFAULT_PORT_NUMBER;
     private static String hostName = DEFAULT_HOST_NAME;
-
 
     private static ArrayList<KeyPair> keyPairs;
 
     public static void main(String[] args) {
         try{
             Socket echoSocket = new Socket(hostName, portNumber);
+
             PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
             BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-
+            System.out.println("Connected!");
             keyPairs = new ArrayList<>();
             String req, resp;
 
@@ -32,24 +32,21 @@ public class Client {
                 req = stdin.readLine();
                 if(req.length() > 4){
                     if(req.equalsIgnoreCase(">exit")){
-                        for(int i = 0; i < 3; i++){
-                            resp = in.readLine();
-                            System.out.println(resp);
-                        }
+                        System.out.println("Shutting down.");
                         echoSocket.close();
                         break;
                     }
                     if(req.substring(0,5).equals(">get ")){
                         out.println(req);
-                        int index = Integer.parseInt(req.substring(6));
+                        int index = Integer.parseInt(req.substring(5));
                         resp = RSAGenerator.decrypt(in.readLine(), keyPairs.get(index).getPrivate());
                         System.out.println(resp);
                     }
-                    if(req.substring(0, 8).equals(">create ")){
+                    if(req.length()>8 && req.substring(0, 8).equals(">create ")){
                         KeyPair kp = RSAGenerator.generateKeyPair();
                         keyPairs.add(kp);
                         String cipherText = RSAGenerator.encrypt(req.substring(8), kp.getPublic());
-                        out.println(cipherText);
+                        out.println(">create " + cipherText);
                         resp = in.readLine();
                         System.out.println(resp);
                     }
